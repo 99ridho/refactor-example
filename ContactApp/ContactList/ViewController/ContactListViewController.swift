@@ -32,6 +32,7 @@ class ContactListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupView()
+        self.fetchContacts()
     }
     
     private func setupView() {
@@ -68,12 +69,14 @@ class ContactListViewController: UIViewController {
                 let response = try jsonDecoder.decode(ContactListResponse.self, from: theData)
                 let contacts = response.data
                 
-                self?.rawContacts = contacts
-                self?.contactCellData = contacts.map {
-                    ContactListCellData(imageURL: $0.imageUrl, name: $0.name)
+                DispatchQueue.main.async {
+                    self?.rawContacts = contacts
+                    self?.contactCellData = contacts.map {
+                        ContactListCellData(imageURL: $0.imageUrl, name: $0.name)
+                    }
+                    
+                    self?.tableView.reloadData()
                 }
-                
-                self?.tableView.reloadData()
             } catch {
                 // do something when failed response mapping
             }

@@ -26,20 +26,20 @@ class ContactListViewController: UIViewController {
         return decoder
     }()
     
-    private var rawContacts: [Contact] = []
-    private var contactCellData: [ContactListCellData] = []
+    private let viewModel = ContactListViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupView()
+        self.setupViewModel()
         self.fetchContacts()
     }
     
     private func setupView() {
         title = "Contact List"
         
-        tableView.delegate = self
-        tableView.dataSource = self
+        tableView.delegate = viewModel
+        tableView.dataSource = viewModel
         
         view.addSubview(tableView)
         NSLayoutConstraint.activate([
@@ -52,54 +52,21 @@ class ContactListViewController: UIViewController {
         view.backgroundColor = .white
     }
     
-    private func fetchContacts() {
-        let url = URL(string: "https://gist.githubusercontent.com/99ridho/cbbeae1fa014522151e45a766492233c/raw/8935d40ae0650f12b452d6a5e9aa238a02b05511/contacts.json")!
-        let task = URLSession.shared.dataTask(with: url) { [weak self, jsonDecoder] (data, response, error) in
-            if error != nil {
-                // do something with error
-                return
-            }
-            
-            guard let theData = data else {
-                // do something when data is null
-                return
-            }
-            
-            do {
-                let response = try jsonDecoder.decode(ContactListResponse.self, from: theData)
-                let contacts = response.data
-                
-                DispatchQueue.main.async {
-                    self?.rawContacts = contacts
-                    self?.contactCellData = contacts.map {
-                        ContactListCellData(imageURL: $0.imageUrl, name: $0.name)
-                    }
-                    
-                    self?.tableView.reloadData()
-                }
-            } catch {
-                // do something when failed response mapping
-            }
+    private func setupViewModel() {
+        viewModel.onContactSelectedByID = { id in
+            print(id) // todo: handle
         }
         
-        task.resume()
-    }
-}
-
-extension ContactListViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return contactCellData.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellData = contactCellData[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: ContactListTableViewCell.reuseIdentifier) as! ContactListTableViewCell
-        cell.configureCell(with: cellData)
+        viewModel.onDataRefreshed = { [tableView] in
+            tableView.reloadData()
+        }
         
-        return cell
+        viewModel.onError = { error in
+            print(error) // todo: handle
+        }
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+    private func fetchContacts() {
+        viewModel.fetchContactList()
     }
 }

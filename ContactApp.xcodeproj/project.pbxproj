@@ -14,6 +14,7 @@
 		E554202D233C642600214B66 /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = E554202C233C642600214B66 /* Contact.swift */; };
 		E5542030233C646100214B66 /* ContactListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E554202F233C646100214B66 /* ContactListViewController.swift */; };
 		E5542033233C647600214B66 /* ContactListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5542032233C647600214B66 /* ContactListTableViewCell.swift */; };
+		E5F94B2A2343005900B3035C /* ContactService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F94B292343005900B3035C /* ContactService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		E554202C233C642600214B66 /* Contact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		E554202F233C646100214B66 /* ContactListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListViewController.swift; sourceTree = "<group>"; };
 		E5542032233C647600214B66 /* ContactListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListTableViewCell.swift; sourceTree = "<group>"; };
+		E5F94B292343005900B3035C /* ContactService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 			children = (
 				E554202B233C63B400214B66 /* Resource */,
 				E554202A233C637F00214B66 /* Application */,
+				E5F94B282343003F00B3035C /* Service */,
 				E5542027233C635A00214B66 /* ContactList */,
 				E5542021233C620300214B66 /* Info.plist */,
 			);
@@ -116,6 +119,14 @@
 				E5542032233C647600214B66 /* ContactListTableViewCell.swift */,
 			);
 			path = Cell;
+			sourceTree = "<group>";
+		};
+		E5F94B282343003F00B3035C /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				E5F94B292343005900B3035C /* ContactService.swift */,
+			);
+			path = Service;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -190,6 +201,7 @@
 			files = (
 				E554202D233C642600214B66 /* Contact.swift in Sources */,
 				E5542033233C647600214B66 /* ContactListTableViewCell.swift in Sources */,
+				E5F94B2A2343005900B3035C /* ContactService.swift in Sources */,
 				E5542030233C646100214B66 /* ContactListViewController.swift in Sources */,
 				E5542014233C620100214B66 /* AppDelegate.swift in Sources */,
 				E5542016233C620100214B66 /* SceneDelegate.swift in Sources */,

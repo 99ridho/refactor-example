@@ -58,7 +58,9 @@ class ContactListViewController: UIViewController {
         }
         
         viewModel.onDataRefreshed = { [tableView] in
-            tableView.reloadData()
+            DispatchQueue.main.async {
+                tableView.reloadData()
+            }
         }
         
         viewModel.onError = { error in

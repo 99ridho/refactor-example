@@ -28,17 +28,15 @@ class ContactListViewModel: NSObject {
     
     func fetchContactList() {
         service.fetchContacts { [weak self] (result) in
-            DispatchQueue.main.async {
-                switch result {
-                case let .success(contacts):
-                    self?.rawContacts = contacts
-                    self?.contactsCellData = contacts.map {
-                        ContactListCellData(imageURL: $0.imageUrl, name: $0.name)
-                    }
-                    self?.onDataRefreshed?()
-                case let .failure(error):
-                    self?.onError?(error)
+            switch result {
+            case let .success(contacts):
+                self?.rawContacts = contacts
+                self?.contactsCellData = contacts.map {
+                    ContactListCellData(imageURL: $0.imageUrl, name: $0.name)
                 }
+                self?.onDataRefreshed?()
+            case let .failure(error):
+                self?.onError?(error)
             }
         }
     }

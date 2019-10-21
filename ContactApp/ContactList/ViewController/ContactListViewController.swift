@@ -7,11 +7,17 @@
 //
 
 import UIKit
+import RxDataSources
+import RxSwift
+import RxCocoa
 
 class ContactListViewController: UIViewController {
-    private let tableView: UITableView = {
+    private let refreshControl = UIRefreshControl()
+    
+    private lazy var tableView: UITableView = { [refreshControl] in
         let tv = UITableView(frame: .zero, style: .plain)
         tv.register(ContactListTableViewCell.self, forCellReuseIdentifier: ContactListTableViewCell.reuseIdentifier)
+        tv.refreshControl = refreshControl
         tv.estimatedRowHeight = 80
         tv.rowHeight = 80
         tv.translatesAutoresizingMaskIntoConstraints = false
@@ -19,27 +25,29 @@ class ContactListViewController: UIViewController {
         return tv
     }()
     
-    private let jsonDecoder: JSONDecoder = {
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        
-        return decoder
-    }()
+    private let reactiveViewModel: ReactiveContactListViewModel
     
-    private let viewModel = ContactListViewModel()
+    private let disposeBag = DisposeBag()
+    
+    internal init() {
+        self.reactiveViewModel = ReactiveContactListViewModel()
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.setupView()
         self.setupViewModel()
-        self.fetchContacts()
     }
     
     private func setupView() {
         title = "Contact List"
-        
-        tableView.delegate = viewModel
-        tableView.dataSource = viewModel
         
         view.addSubview(tableView)
         NSLayoutConstraint.activate([
@@ -53,22 +61,31 @@ class ContactListViewController: UIViewController {
     }
     
     private func setupViewModel() {
-        viewModel.onContactSelectedByID = { id in
-            print(id) // todo: handle
-        }
+        let input = ReactiveContactListViewModel.Input(
+            viewDidLoad: .just(()),
+            didTapAtIndex: tableView.rx.itemSelected.asDriver(),
+            pullToRefresh: refreshControl.rx.controlEvent(.allEvents).asDriver()
+        )
         
-        viewModel.onDataRefreshed = { [tableView] in
-            DispatchQueue.main.async {
-                tableView.reloadData()
-            }
-        }
+        let output = reactiveViewModel.transform(input: input)
         
-        viewModel.onError = { error in
-            print(error) // todo: handle
-        }
-    }
-    
-    private func fetchContacts() {
-        viewModel.fetchContactList()
+        output.tableData.drive(
+           tableView.rx.items(
+               cellIdentifier: ContactListTableViewCell.reuseIdentifier,
+               cellType: ContactListTableViewCell.self
+           )
+       ) { _, data, cell in
+          cell.configureCell(with: data)
+       }.disposed(by: disposeBag)
+        
+        output.error.drive(onNext: { errorMessage in
+            print(">>> \(errorMessage)")
+        }).disposed(by: disposeBag)
+        
+        output.selectedIndex.drive(onNext: { (index, model) in
+            print(">>> select at \(index) with model \(model)")
+        }).disposed(by: disposeBag)
+        
+        output.isLoading.drive(refreshControl.rx.isRefreshing).disposed(by: disposeBag)
     }
 }

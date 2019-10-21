@@ -36,6 +36,7 @@ internal class ReactiveContactListViewModel: ViewModelType{
         
         let fetchContactList = fetchContactListTrigger
             .asObservable()
+            .observeOn(ConcurrentDispatchQueueScheduler(qos: .userInitiated))
             .flatMapLatest { [service] _ -> Observable<[Contact]> in
                 return service
                     .reactiveFetchContacts()
@@ -57,7 +58,8 @@ internal class ReactiveContactListViewModel: ViewModelType{
         
         let isFinishLoading = Observable.merge(
             fetchContactList.map {_ in true},
-            contactListCellData.map {_ in false}
+            contactListCellData.map {_ in false},
+            fetchContactListErrorDetail.map {_ in false}
         )
         
         // MARK: - Output

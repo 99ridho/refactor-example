@@ -25,7 +25,7 @@ class NetworkContactService: ContactServiceProtocol {
     }()
     
     func fetchContacts(completion: @escaping ((Result<[Contact], Error>) -> Void)) {
-        let url = URL(string: "https://gist.githubusercontent.com/99ridho/cbbeae1fa014522151e45a766492233c/raw/8935d40ae0650f12b452d6a5e9aa238a02b05511/contacts.json")!
+        let url = URL(string: "https://gist.githubusercontent.com/99ridho/cbbeae1fa014522151e45a766492233c/raw/e3ea7cf52a7de7872863f9b2350f2c434eb0fe2c/contacts.json")!
         
         let task = URLSession.shared.dataTask(with: url) { [jsonDecoder] (data, response, error) in
             if let theError = error {

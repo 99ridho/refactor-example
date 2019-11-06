@@ -53,7 +53,7 @@ class ContactListViewController: UIViewController {
     }
     
     private func fetchContacts() {
-        let url = URL(string: "https://gist.githubusercontent.com/99ridho/cbbeae1fa014522151e45a766492233c/raw/8935d40ae0650f12b452d6a5e9aa238a02b05511/contacts.json")!
+        let url = URL(string: "https://gist.githubusercontent.com/99ridho/cbbeae1fa014522151e45a766492233c/raw/e3ea7cf52a7de7872863f9b2350f2c434eb0fe2c/contacts.json")!
         let task = URLSession.shared.dataTask(with: url) { [weak self, jsonDecoder] (data, response, error) in
             if error != nil {
                 // do something with error
